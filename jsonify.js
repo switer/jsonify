@@ -1,6 +1,7 @@
 !function (exports) {
 
     var toString = Object.prototype.toString,
+        slice = Array.prototype.slice,
         objType = function (obj) {
             return toString.call(obj).match(/\[object ([a-zA-Z]+)\]/)[1];
         };
@@ -10,15 +11,27 @@
     }
 
     function jsonify (obj) {
-        var jsonObj;
+        var jsonObj,
+            type = objType(obj);
+
         try {
-            jsonObj = JSON.parse(JSON.stringify(obj));
+            if (type == 'Undefined') {
+                jsonObj = 'undefined';
+            } else if (obj !== obj) {
+                jsonObj = 'NaN';
+            } else {
+                jsonObj = JSON.parse(JSON.stringify(obj));
+            }
 
         } catch (e) {
-            var type = objType(obj);
             if (type.match('Element')) {
                 jsonObj = obj.outerHTML.replace(obj.innerHTML, '');
             } else if (type == 'Text') {
+                var text = obj.textContent,
+                    len = text.length;
+                if (len > 70) {
+                    text = text.substr(0, 30) + ' ... ' + text.substr(len - 30, len - 1);
+                }
                 jsonObj = obj.textContent;
             } else if (type == 'Array' || type == 'NodeList') {
                 var array = [];
@@ -43,7 +56,6 @@
         }
 
         return jsonObj;
-        
     }
 
     exports.jsonify = jsonify;
