@@ -1,0 +1,24 @@
+{
+  "name": "jsonify",
+  "version": "1.0.0",
+  "description": "Every object can be serialized to json.",
+  "main": "jsonify.js",
+  "scripts": {
+    "test": "node test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/switer/jsonify.git"
+  },
+  "keywords": [
+    "jsonify",
+    "json",
+    "serialize"
+  ],
+  "author": "switer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/switer/jsonify/issues"
+  },
+  "homepage": "https://github.com/switer/jsonify"
+}
