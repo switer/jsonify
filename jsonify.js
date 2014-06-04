@@ -1,4 +1,8 @@
+/**
+ *  Every object can be serialized to json
+ **/
 !function (exports) {
+    'use strict;'
 
     var toString = Object.prototype.toString,
         slice = Array.prototype.slice,
@@ -6,8 +10,12 @@
             return toString.call(obj).match(/\[object ([a-zA-Z]+)\]/)[1];
         };
 
-    function HTMLElement (html) {
-        this.html = html;
+    function textOmit (text) {
+        var len = text.length;
+        if (len > 70) {
+            text = text.substr(0, 30) + ' ... ' + text.substr(len - 30, len - 1);
+        }
+        return text;
     }
 
     function jsonify (obj) {
@@ -27,12 +35,7 @@
             if (type.match('Element')) {
                 jsonObj = obj.outerHTML.replace(obj.innerHTML, '');
             } else if (type == 'Text') {
-                var text = obj.textContent,
-                    len = text.length;
-                if (len > 70) {
-                    text = text.substr(0, 30) + ' ... ' + text.substr(len - 30, len - 1);
-                }
-                jsonObj = obj.textContent;
+                jsonObj = textOmit(obj.textContent);
             } else if (type == 'Array' || type == 'NodeList') {
                 var array = [];
                 obj = slice.call(obj);
@@ -49,7 +52,14 @@
                 });
                 jsonObj = object;
             } else if (type == 'Function') {
-                jsonObj = obj.toString();
+                jsonObj = textOmit(obj.toString());
+            } else if (type == 'global' || type == 'HTMLDocument') {
+                var keys = Object.keys(obj),
+                    object = {};
+                keys.forEach(function (key) {
+                    object[key] = objType(obj[key]);
+                });
+                jsonObj = object;
             } else {
                 jsonObj = toString.call(obj); 
             }
